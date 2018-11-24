@@ -32,9 +32,10 @@ fi
 
 git reset --soft `git rev-list --all | tail -1`
 rm -rf *
-cp -a ../doc/_build/html/* .
-cp -a ../doc/_build/html/.* .
-cp -a ../.circleci/CNAME .
+cp -r ../doc/_build/html/* .
+touch .nojekyll
+cp ../.circleci/CNAME .
+chmod -R 777 *
 
 git ls-files -v
 
