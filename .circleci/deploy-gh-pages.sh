@@ -33,6 +33,7 @@ fi
 git reset --soft `git rev-list --all | tail -1`
 rm -rf *
 cp -a ../doc/_build/html/* .
+cp -a ../doc/_build/html/.* .
 cp -a ../.circleci/CNAME .
 
 git ls-files -v
