@@ -32,7 +32,7 @@ jobs:
             ssh-keyscan -H github.com >> ~/.ssh/known_hosts
             chmod 644 ~/.ssh/known_hosts
             python3.6 -m pip install setuptools --upgrade
-            python3.6 -m pip install wheel
+            python3.6 -m pip install wheel twine
             python3.6 -m pip install alabaster Pygments imagesize sphinx sphinx-paramlinks sphinx_rtd_theme
       - run:
           command: |
@@ -54,7 +54,7 @@ jobs:
             echo -e "[pypi]" >> ~/.pypirc
             echo -e "username = pyjadx" >> ~/.pypirc
             echo -e "password = $PYPI_PASSWORD" >> ~/.pypir
-            twine upload dist/*
+            twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
 
 
