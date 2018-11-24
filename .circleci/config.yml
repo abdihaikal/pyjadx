@@ -51,7 +51,7 @@ jobs:
           tags:
             only: /.*/
           command: |
-            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "[test]" >> ~/.pypirc
             echo -e "username = pyjadx" >> ~/.pypirc
             echo -e "password = $PYPI_PASSWORD" >> ~/.pypir
             twine upload --repository-url https://test.pypi.org/legacy/ dist/*
