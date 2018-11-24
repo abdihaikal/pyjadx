@@ -50,6 +50,8 @@ jobs:
           name: Deploy PyPi
           tags:
             only: /.*/
+          branches:
+            ignore: /.*/
           command: |
             echo -e "[pypi]"                    >> ~/.pypirc
             echo -e "username = pyjadx"         >> ~/.pypirc
