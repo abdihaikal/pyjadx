@@ -46,6 +46,15 @@ jobs:
           command: |
             chmod u+x ./.circleci/deploy-gh-pages.sh
             ./.circleci/deploy-gh-pages.sh
+      - deploy:
+          name: Deploy PyPi
+          tags:
+            only: /.*/
+          command: |
+            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "username = pyjadx" >> ~/.pypirc
+            echo -e "password = $PYPI_PASSWORD" >> ~/.pypir
+            twine upload dist/*
 
 
 
