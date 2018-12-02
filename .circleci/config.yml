@@ -15,7 +15,7 @@ jobs:
       - GH_EMAIL: "jadx-ci@circleci"
       - GH_NAME: "Jadx CI - Circleci"
     docker:
-      - image: ubuntu:18.04
+      - image: ubuntu:18.10
     steps:
       - add_ssh_keys: *add_ssh_keys
       - checkout
@@ -24,6 +24,7 @@ jobs:
             apt-get update -qq
             apt-get install -yqq cmake zlib1g-dev python-dev build-essential git software-properties-common
             apt-get install -yqq libpython3.6 libpython3.6-dev python3.6 python3-pip
+            apt-get install -yqq libpython3.7 libpython3.7-dev python3.7
             apt-get install -yqq g++
             apt-get install -yqq openjdk-8-jdk git
             apt-get update -qq
@@ -34,12 +35,17 @@ jobs:
             python3.6 -m pip install setuptools --upgrade
             python3.6 -m pip install wheel twine
             python3.6 -m pip install alabaster Pygments imagesize sphinx sphinx-paramlinks sphinx_rtd_theme
+            python3.7 -m pip install setuptools --upgrade
+            python3.7 -m pip install wheel twine
+            python3.7 -m pip install alabaster Pygments imagesize sphinx sphinx-paramlinks sphinx_rtd_theme
       - run:
           command: |
             python3.6 ./setup.py install --user
             python3.6 ./setup.py build_sphinx
             python3.6 ./setup.py bdist_wheel
             python3.6 ./examples/jadx_decompile.py ./examples/com.passwordchecker.apk --classes com.example.passwordchecker.PasswordChecker
+            python3.7 ./setup.py bdist_wheel
+            python3.7 ./setup.py sdist
       - deploy:
           name: Deploy Documentation
           branch: master
@@ -48,15 +54,11 @@ jobs:
             ./.circleci/deploy-gh-pages.sh
       - deploy:
           name: Deploy PyPi
-          tags:
-            only: /.*/
-          branches:
-            ignore: /.*/
           command: |
             echo -e "[pypi]"                    >> ~/.pypirc
             echo -e "username = pyjadx"         >> ~/.pypirc
             echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
-            python3.6 -m twine upload  ./dist/*
+            python3.6 -m twine upload --repository-url https://test.pypi.org/legacy/ ./dist/*
 
 
 

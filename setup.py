@@ -75,7 +75,7 @@ class CMakeBuild(build_ext):
             os.makedirs(self.build_temp)
 
         subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
-        subprocess.check_call(['cmake', '--build', '.'] + build_args, cwd=self.build_temp)
+        subprocess.check_call(['cmake', '--build', '.', '--target', 'pyjadx'] + build_args, cwd=self.build_temp)
 
         pyjadx_dst  = os.path.join(self.build_lib, self.get_ext_filename(self.get_ext_fullname(ext.name)))
 
@@ -90,10 +90,11 @@ class CMakeBuild(build_ext):
                 dry_run=self.dry_run)
 
 
+
 # From setuptools-git-version
 command       = 'git describe --tags --long --dirty'
 is_tagged_cmd = 'git tag --list --points-at=HEAD'
-fmt           = '{tag}+{gitsha}'
+fmt           = '{tag}.dev0'
 fmt_tagged    = '{tag}'
 
 def format_version(version, fmt=fmt):
@@ -116,19 +117,35 @@ def check_if_tagged():
     output = subprocess.check_output(is_tagged_cmd.split()).decode('utf-8').strip()
     return output != ""
 
-# Fetch version from git tags, and write to version.py.
-# Also, when git is not available (PyPi package), use stored version.py.
-version   = "0.0.0"
-is_tagged = False
-try:
-    is_tagged = check_if_tagged()
-except:
-    is_tagged = False
+def get_pkg_info_version(pkg_info_file):
+    dist_info = Distribution.from_filename(CURRENT_DIR / "pyjadx.egg-info")
+    pkg = get_distribution('pyjadx')
+    return pkg.version
 
-try:
-    version = get_git_version(is_tagged)
-except:
-    pass
+
+def get_version():
+    version   = "0.0.0"
+    pkg_info  = CURRENT_DIR / "pyjadx.egg-info" / "PKG-INFO"
+    git_dir   = CURRENT_DIR / ".git"
+    if git_dir.is_dir():
+        is_tagged = False
+        try:
+            is_tagged = check_if_tagged()
+        except:
+            is_tagged = False
+
+        try:
+            return get_git_version(is_tagged)
+        except:
+            pass
+
+    if pkg_info.is_file():
+        return get_pkg_info_version(pkg_info)
+
+
+
+version = get_version()
+
 
 
 setup(
