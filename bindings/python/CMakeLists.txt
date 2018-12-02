@@ -4,13 +4,13 @@ include(ExternalProject)
 set(PYBIND11_VERSION 2.2.3)
 set(PYBIND11_SHA256 SHA256=3a3b7b651afab1c5ba557f4c37d785a522b8030dfc765da26adc2ecd1de940ea)
 set(PYBIND11_URL "${THIRD_PARTY_DIRECTORY}/pybind11-${PYBIND11_VERSION}.tar.gz" CACHE STRING "URL to the Pybind11 repo")
-ExternalProject_Add(ami_pybind11
+ExternalProject_Add(pybind11
   URL               ${PYBIND11_URL}
   URL_HASH          ${PYBIND11_SHA256}
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   "")
-ExternalProject_get_property(ami_pybind11 SOURCE_DIR)
+ExternalProject_get_property(pybind11 SOURCE_DIR)
 set(PYBIND11_SOURCE_DIR "${SOURCE_DIR}")
 
 # Add a CMake parameter for choosing a desired Python version
@@ -33,7 +33,7 @@ target_include_directories(pyjadx PUBLIC
   "${PYBIND11_SOURCE_DIR}/include")
 
 
-add_dependencies(pyjadx ami_pybind11)
+add_dependencies(pyjadx pybind11)
 
 target_link_libraries(pyjadx PUBLIC jadxjni)
 

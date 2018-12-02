@@ -11,7 +11,11 @@ We acknowledge and are grateful to these developers for their contributions to o
 +==========+====================================+====================================================+
 | Jadx     | https://github.com/skylot/jadx     | Skylot                                             |
 +----------+------------------------------------+----------------------------------------------------+
-| jni.hpp  | https://github.com/mapbox/jni.hpp  | `Wenzel Jakob <http://rgl.epfl.ch/people/wjakob>`_ |
+| jni.hpp  | https://github.com/mapbox/jni.hpp  | `mapbox <https://www.mapbox.com/>`_                |
 +----------+------------------------------------+----------------------------------------------------+
-| pybind11 | https://github.com/pybind/pybind11 | `mapbox <https://www.mapbox.com/>`_                |
+| pybind11 | https://github.com/pybind/pybind11 | `Wenzel Jakob <http://rgl.epfl.ch/people/wjakob>`_ |
 +----------+------------------------------------+----------------------------------------------------+
+
+------
+
+We also thanks `Quarkslab <https://www.quarkslab.com/>`_.

@@ -1,66 +1,104 @@
-ssh_key_anchor: &add_ssh_keys
-    fingerprints:
-      - "5b:1a:88:80:1f:03:34:b9:b8:67:d2:73:d6:22:a1:98"
+version: 2.1
 
-version: 2
-jobs:
-  build:
-    branches:
-      ignore:
-        gh-pages
-
-    environment:
-      - SOURCE_BRANCH: master
-      - TARGET_BRANCH: gh-pages
-      - GH_EMAIL: "jadx-ci@circleci"
-      - GH_NAME: "Jadx CI - Circleci"
+executors:
+  ubuntu-executor:
     docker:
       - image: ubuntu:18.10
+
+jobs:
+  build:
+    executor: ubuntu-executor
     steps:
-      - add_ssh_keys: *add_ssh_keys
-      - checkout
       - run:
           command: |
             apt-get update -qq
+            apt-get install -yqq openjdk-8-jdk
             apt-get install -yqq cmake zlib1g-dev python-dev build-essential git software-properties-common
             apt-get install -yqq libpython3.6 libpython3.6-dev python3.6 python3-pip
             apt-get install -yqq libpython3.7 libpython3.7-dev python3.7
             apt-get install -yqq g++
-            apt-get install -yqq openjdk-8-jdk git
-            apt-get update -qq
-            mkdir -p ~/.ssh
-            chmod 700 ~/.ssh
-            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-            chmod 644 ~/.ssh/known_hosts
+            update-alternatives --get-selections | grep ^java
             python3.6 -m pip install setuptools --upgrade
             python3.6 -m pip install wheel twine
             python3.6 -m pip install alabaster Pygments imagesize sphinx sphinx-paramlinks sphinx_rtd_theme
             python3.7 -m pip install setuptools --upgrade
-            python3.7 -m pip install wheel twine
-            python3.7 -m pip install alabaster Pygments imagesize sphinx sphinx-paramlinks sphinx_rtd_theme
+      - checkout
       - run:
           command: |
-            python3.6 ./setup.py install --user
+            python3.6 ./setup.py build -j8 install --user
             python3.6 ./setup.py build_sphinx
-            python3.6 ./setup.py bdist_wheel
+            python3.6 ./setup.py bdist_wheel --plat-name="manylinux1_x86_64"
             python3.6 ./examples/jadx_decompile.py ./examples/com.passwordchecker.apk --classes com.example.passwordchecker.PasswordChecker
-            python3.7 ./setup.py bdist_wheel
+            python3.7 ./setup.py build -j8 bdist_wheel --plat-name="manylinux1_x86_64"
             python3.7 ./setup.py sdist
-      - deploy:
-          name: Deploy Documentation
-          branch: master
-          command: |
-            chmod u+x ./.circleci/deploy-gh-pages.sh
-            ./.circleci/deploy-gh-pages.sh
-      - deploy:
-          name: Deploy PyPi
-          command: |
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - dist
+            - doc
+            - .circleci
+  deploy_doc:
+    executor: ubuntu-executor
+    environment:
+      - GH_EMAIL: "jadx-ci@circleci"
+      - GH_NAME: "Jadx CI - Circleci"
+    steps:
+      - run: |
+          apt-get update -qq
+          apt-get install -yqq cmake zlib1g-dev python-dev build-essential git software-properties-common
+          apt-get install -yqq libpython3.6 libpython3.6-dev python3.6 python3-pip
+          apt-get install -yqq libpython3.7 libpython3.7-dev python3.7
+          apt-get install -yqq ca-certificates
+          python3.6 -m pip install setuptools --upgrade
+          python3.6 -m pip install wheel twine
+          python3.6 -m pip install alabaster Pygments imagesize sphinx sphinx-paramlinks sphinx_rtd_theme
+          python3.7 -m pip install setuptools --upgrade
+          python3.7 -m pip install wheel twine
+      - attach_workspace:
+          at: ~/project
+      - run: |
+          chmod u+x ./.circleci/deploy-gh-pages.sh
+          ./.circleci/deploy-gh-pages.sh
+  deploy_pypi:
+      executor: ubuntu-executor
+      steps:
+        - run: |
+            apt-get update -qq
+            apt-get install -yqq ca-certificates
+            apt-get install -yqq zlib1g-dev python-dev build-essential git software-properties-common
+            apt-get install -yqq libpython3.6 libpython3.6-dev python3.6 python3-pip
+            python3.6 -m pip install setuptools --upgrade
+            python3.6 -m pip install wheel twine
+        - attach_workspace:
+            at: ~/project
+        - run: |
             echo -e "[pypi]"                    >> ~/.pypirc
             echo -e "username = pyjadx"         >> ~/.pypirc
             echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
-            python3.6 -m twine upload --repository-url https://test.pypi.org/legacy/ ./dist/*
+            python3.6 -m twine upload ./dist/*
 
-
-
-
-
+workflows:
+  version: 2.1
+  build-and-deploy:
+    jobs:
+      - build:
+          filters:  # required since `deploy` has tag filters AND requires `build`
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                gh-pages
+      - deploy_doc:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy_pypi:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/

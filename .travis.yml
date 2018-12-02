@@ -3,7 +3,6 @@ language: cpp
 git:
   depth: false
 
-
 matrix:
     include:
 
@@ -58,9 +57,18 @@ before_install:
 
 
 script:
-  - $PYTHON_BINARY ./setup.py install
+  - $PYTHON_BINARY ./setup.py build -j8 install
   - $PYTHON_BINARY ./setup.py bdist_wheel
   - $PYTHON_BINARY ./examples/jadx_decompile.py ./examples/com.passwordchecker.apk --classes com.example.passwordchecker.PasswordChecker
 
-
-
+deploy:
+  provider: pypi
+  user: pyjadx
+  #server: https://test.pypi.org/legacy/
+  distributions: "bdist_wheel"
+  skip_existing: true
+  skip_cleanup: true
+  on:
+    tags: true
+  password:
+    secure: Q1KSN6TjNGo+LjMswlQetdVglQr8Zo05ybew/7onwGu7TeuWx4HnQgyFbFilEhHpusPZdo+hE+utoOnmcuKyijyvzUHcF9eINShCs18rpdpanURTyfjef9N8d96ZeaJtkZPjwxIl23YjgQzxja6ubYgKwysDrrCut92Od+VMYu1XDFAU2jCUqMg4xTBCsMQTRq4MrAZE95jY0lJE3EyS3tAoFPOh3ur4ZIlnTJs6hWschDT0C7QQqJKAVSgENm4vlh4W/zuL/+zrIMu+1FBYG0GN3HvEiKNtgMF4ad19U/dvWcw5d863u3DwbmRToep1R0+hj9KX3gLK1smQfok7xWy0HAzmW/XTL55yB+1nbPJXi/EpgflItO4B/Ah6WUc2h+0mv0pLjPTHJuWRF0a3tQw1XtICBuT3lxVxwD0DSdutfOzbFRKf3MDmg15NZJ3Johb3EtVoZbkpAmweh/EYSvpQihqaSEg0g1/yInWb1nDyhfnZvvMvKgeAj7uxdoSPlSzicDWiD6SVemPxe8cT3pWTtbCc/KQbZAEHP0ADSG4A5Cxfj0UhGNCeGnQHCZfktos2gLk2ElXOfpVSX8Rc6sgDkLKaBBmWZmM9v2Zo8v0XOFMm43OhNpb11GTd6Srew9XrDot8qPb+6Ib+Ao1VBuN8PCHe//noyVBhsxeaWxk=
