@@ -74,6 +74,30 @@ PYBIND11_MODULE(pyjadx, jadx_module) {
         &JavaClass::getCode,
         "Java decompiled code as a ``str``")
 
+    .def("save",
+        [] (JavaClass& cls, py::object output) {
+          std::string str_output;
+
+          auto&& pathlib = py::module::import("pathlib");
+          auto&& Path = pathlib.attr("Path");
+          if (py::isinstance<py::str>(output)) {
+            str_output = output.cast<std::string>();
+          }
+          else if (py::isinstance(output, Path)) {
+            str_output = output.attr("as_posix")().cast<std::string>();
+
+          } else {
+            std::string error_str = py::repr(output).cast<std::string>();
+            error_str = error_str + " is not supported!";
+            throw py::type_error(error_str.c_str());
+          }
+
+          return cls.save(str_output);
+        },
+        "Save decompiled code in the file given in first parameter\n\n"
+        "Return False is an error occurred",
+        "output_path"_a)
+
     .def_property_readonly("methods",
         &JavaClass::methods,
         "List of :class:`~pyjadx.JavaMethod`")

@@ -36,6 +36,8 @@ class JavaClass : public JavaNode<JavaClass, JavaClassTag, Object<JavaClassTag>,
 
   std::string getCode(void);
 
+  bool save(const std::string& path);
+
   methods_list_t methods(void);
 };
 
