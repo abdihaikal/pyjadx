@@ -45,9 +45,12 @@ Copyright 2018 by Skylot
 Licensed under the Apache 2.0 License
 
 
-Project: pybind11 - https://github.com/pybind/pybind11
-`Wenzel Jakob <http://rgl.epfl.ch/people/wjakob>`_
-License (BSD) https://github.com/pybind/pybind11/blob/master/LICENSE
+:Project:
+          pybind11 - https://github.com/pybind/pybind11
+
+          `Wenzel Jakob <http://rgl.epfl.ch/people/wjakob>`_
+
+          License (BSD) https://github.com/pybind/pybind11/blob/master/LICENSE
 
 Project: jni.hpp - https://github.com/mapbox/jni.hpp
 `mapbox <https://www.mapbox.com/>`_
