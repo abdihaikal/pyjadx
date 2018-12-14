@@ -1,7 +1,14 @@
 PyJadx
 ======
 
-PyJadx provides Python binding for `Jadx decompiler <https://github.com/skylot/jadx>`_
+PyJadx provides Python binding for `Jadx decompiler <https://github.com/skylot/jadx>`_.
+
+As Jadx is written in Java, it use the JNI interface throught `jni.hpp <https://github.com/mapbox/jni.hpp>`_ to make the bridge Java / C++ then it uses `pybind11 <https://github.com/pybind/pybind11>`_
+to create the bridge C++ / Python.
+
+.. image:: .github/archi.png
+   :width: 50 %
+   :align: center
 
 Getting Start
 -------------
@@ -12,13 +19,13 @@ Getting Start
   $ cd pyjadx
   $ python ./setup.py install --user
 
-You can also build the documentation using:
+You can also build the documentation with:
 
 .. code-block::
 
   $ python ./setup.py build_sphinx
 
-The generated doc is located under ``doc/_build/html``
+The generated doc will be located in ``doc/_build/html``
 
 Example
 -------
@@ -28,11 +35,12 @@ Example
    import pyjadx
 
    jadx = pyjadx.Jadx()
-   jadx.load("my.apk")
+   app = jadx.load("my.apk")
 
-   for cls in classes:
-     code = cls.code)
-     print(code)
+   for cls in app.classes:
+     print(cls.code)
+
+See API reference `here <http://pyjadx.romainthomas.fr/>`_
 
 Credits
 -------
@@ -40,21 +48,27 @@ Credits
 This application uses Open Source components. You can find the source code of their open source projects along with license information below.
 We acknowledge and are grateful to these developers for their contributions to open source.
 
-Project: Jadx - https://github.com/skylot/jadx
-Copyright 2018 by Skylot
-Licensed under the Apache 2.0 License
+:Jadx:
+       https://github.com/skylot/jadx
+
+       Copyright 2018 by Skylot
+
+       Licensed under the Apache 2.0 License
 
 
-:Project:
-          pybind11 - https://github.com/pybind/pybind11
+:pybind11:
+         https://github.com/pybind/pybind11
 
-          `Wenzel Jakob <http://rgl.epfl.ch/people/wjakob>`_
+         `Wenzel Jakob <http://rgl.epfl.ch/people/wjakob>`_
 
-          License (BSD) https://github.com/pybind/pybind11/blob/master/LICENSE
+         License (BSD) https://github.com/pybind/pybind11/blob/master/LICENSE
 
-Project: jni.hpp - https://github.com/mapbox/jni.hpp
-`mapbox <https://www.mapbox.com/>`_
-License: https://github.com/mapbox/jni.hpp/blob/master/LICENSE.txt
+:jni.hpp:
+          https://github.com/mapbox/jni.hpp
+
+          `mapbox <https://www.mapbox.com/>`_
+
+          License: https://github.com/mapbox/jni.hpp/blob/master/LICENSE.txt
 
 Authors
 -------
