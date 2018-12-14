@@ -6,9 +6,10 @@ PyJadx provides Python binding for `Jadx decompiler <https://github.com/skylot/j
 As Jadx is written in Java, it use the JNI interface throught `jni.hpp <https://github.com/mapbox/jni.hpp>`_ to make the bridge Java / C++ then it uses `pybind11 <https://github.com/pybind/pybind11>`_
 to create the bridge C++ / Python.
 
-.. image:: .github/archi.png
-   :width: 50 %
-   :align: center
+.. raw:: html
+
+   <img width="50%" src="https://github.com/romainthomas/pyjadx/blob/master/.github/archi.png"/><br />
+
 
 Getting Start
 -------------
