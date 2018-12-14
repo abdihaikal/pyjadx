@@ -7,8 +7,10 @@ As Jadx is written in Java, it use the JNI interface throught `jni.hpp <https://
 to create the bridge C++ / Python.
 
 .. raw:: html
-
+   
+   <p align="center" >   
    <img width="50%" src="https://github.com/romainthomas/pyjadx/blob/master/.github/archi.png"/><br />
+   </p>
 
 
 Getting Start
