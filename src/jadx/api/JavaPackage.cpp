@@ -15,6 +15,7 @@
 #include <jadx/api/JavaPackage.hpp>
 
 #include <java/util/List.hpp>
+#include <fstream>
 
 namespace jni::jadx::api {
 
@@ -45,6 +46,25 @@ JavaPackage::classes_list_t JavaPackage::classes(void) {
   }
 
   return classes;
+}
+
+
+bool JavaPackage::save(const std::string& directory) {
+  classes_list_t classes = this->classes();
+  std::string directory_normalized = directory;
+  if (directory.back() != '/') {
+    directory_normalized += '/';
+  }
+  for (JavaClass& cls : classes) {
+    std::string output_path = directory_normalized + cls.name() + ".java";
+    std::ofstream output{output_path, std::ios::trunc};
+    if (not output) {
+      std::cerr << "Can't save '" << cls.fullname() << "' to '" << output_path << "'" << std::endl;
+      continue;
+    }
+    output << cls.getCode();
+  }
+  return true;
 }
 
 }

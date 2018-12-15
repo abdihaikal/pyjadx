@@ -35,6 +35,8 @@ class JavaPackage : public JavaNode<JavaPackage, JavaPackageTag, Object<JavaPack
   JavaPackage(JNIEnv& env, const Object<>& obj);
 
   classes_list_t classes(void);
+
+  bool save(const std::string& directory);
 };
 
 }
