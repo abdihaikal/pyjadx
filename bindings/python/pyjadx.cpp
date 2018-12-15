@@ -74,6 +74,25 @@ PYBIND11_MODULE(pyjadx, jadx_module) {
         &JavaClass::getCode,
         "Java decompiled code as a ``str``")
 
+
+    .def_property_readonly("code_highlight",
+        [] (JavaClass& cls) -> py::object {
+          try {
+            auto&& pygments              = py::module::import("pygments");
+            auto&& get_lexer_by_name     = py::module::import("pygments.lexers").attr("get_lexer_by_name");
+            auto&& get_formatter_by_name = py::module::import("pygments.formatters").attr("get_formatter_by_name");
+            auto&& highlight             = pygments.attr("highlight");
+
+            auto&& lexer     = get_lexer_by_name("java");
+            auto&& formatter = get_formatter_by_name("terminal256", "style"_a="monokai", "linenos"_a=false);
+            return highlight(cls.getCode(), lexer, formatter);
+          } catch (const std::exception& e) {
+            py::print(e.what());
+          }
+          return py::str(cls.getCode());
+        },
+        "Highlight decompiled code (Require Pygments)")
+
     .def("save",
         [] (JavaClass& cls, py::object output) {
           std::string str_output;
@@ -131,6 +150,9 @@ PYBIND11_MODULE(pyjadx, jadx_module) {
     .def_property_readonly("decompiled_line",
         &JavaPackage::decompiled_line,
         "Line number in decompiled code associated with this package");
+
+
+
 
 
 

@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 3.6)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
@@ -25,10 +24,19 @@ configure_file(
 )
 
 # Pyjadx Project
-# ============
+# ==============
 project(PYJADX VERSION ${PYJADX_VERSION_MAJOR}.${PYJADX_VERSION_MINOR}.${PYJADX_VERSION_PATCH})
 message(STATUS "${PROJECT_NAME} ${PROJECT_VERSION}")
 
+
+# CCACHE
+# ======
+find_program(CCACHE_FOUND ccache)
+message(STATUS "ccache: ${ASI_USE_CCACHE}")
+if(CCACHE_FOUND)
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+endif()
 
 
 # Set a default build type if none was specified
@@ -45,10 +53,10 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 endif()
 
 
-
 find_package(JNI REQUIRED)
 add_library(jadxjni INTERFACE)
 
+include(CompilerFlags)
 include("${CMAKE_CURRENT_LIST_DIR}/src/CMakeLists.txt")
 
 target_include_directories(jadxjni INTERFACE
@@ -59,14 +67,6 @@ target_include_directories(jadxjni INTERFACE
 )
 target_link_libraries(jadxjni INTERFACE ${JNI_LIBRARIES})
 target_compile_features(jadxjni INTERFACE cxx_std_17)
-
-
-#add_executable(poc "poc.cpp")
-#
-#set_target_properties(poc PROPERTIES POSITION_INDEPENDENT_CODE ON)
-#set_target_properties(poc PROPERTIES LINK_WHAT_YOU_USE ON)
-#
-#target_link_libraries(poc PUBLIC jadxjni)
 
 add_subdirectory(bindings)
 

@@ -27,6 +27,22 @@ set(JADX_PYTHON_SRC
 
 add_library(pyjadx SHARED ${JADX_PYTHON_SRC})
 
+
+
+macro(ADD_FLAG_IF_SUPPORTED flag name)
+  CHECK_C_COMPILER_FLAG("${flag}"   "C_SUPPORTS_${name}")
+  CHECK_CXX_COMPILER_FLAG("${flag}" "CXX_SUPPORTS_${name}")
+
+  if (C_SUPPORTS_${name})
+    target_compile_options(pyjadx PRIVATE ${flag})
+  endif()
+
+  if (CXX_SUPPORTS_${name})
+    target_compile_options(pyjadx PRIVATE ${flag})
+  endif()
+endmacro()
+
+
 target_include_directories(pyjadx PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/"
   "${PYTHON_INCLUDE_DIR}"
@@ -36,6 +52,13 @@ target_include_directories(pyjadx PUBLIC
 add_dependencies(pyjadx pybind11)
 
 target_link_libraries(pyjadx PUBLIC jadxjni)
+
+
+ADD_FLAG_IF_SUPPORTED("-fdiagnostics-color=always" DIAGNOSTICS_COLOR)
+ADD_FLAG_IF_SUPPORTED("-fcolor-diagnostics"        COLOR_DIAGNOSTICS)
+
+ADD_FLAG_IF_SUPPORTED("-Wno-expansion-to-defined"  NO_EXPANSION_TO_DEFINED)
+ADD_FLAG_IF_SUPPORTED("-Wno-deprecated-declarations"  NO_DEPRECATED_DECLARATIONS)
 
 set_target_properties(pyjadx PROPERTIES PREFIX "")
 
