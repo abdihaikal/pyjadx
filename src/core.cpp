@@ -112,9 +112,10 @@ int try_dlopen(std::vector<std::string> potential_paths, void*& out_handle) {
   return 1;
 }
 
-bool resolve_create_jvm(JNI_CreateJavaVM_t& hdl) {
+bool resolve(JNI_CreateJavaVM_t& hdl, JNI_GetCreatedJavaVMs_t& hdl2) {
   if constexpr (jvm_static_link) {
-    hdl = &JNI_CreateJavaVM;
+    hdl  = &JNI_CreateJavaVM;
+    hdl2 = &JNI_GetCreatedJavaVMs;
     return true;
   } else {
     std::vector<std::string> paths = get_potential_libjvm_paths();
@@ -123,8 +124,17 @@ bool resolve_create_jvm(JNI_CreateJavaVM_t& hdl) {
       auto&& fptr = reinterpret_cast<JNI_CreateJavaVM_t>(dlsym(handler, "JNI_CreateJavaVM"));
       if (fptr != nullptr) {
         hdl = fptr;
-        return true;
+      } else {
+        return false;
       }
+
+      auto&& fptr_get_created = reinterpret_cast<JNI_GetCreatedJavaVMs_t>(dlsym(handler, "JNI_GetCreatedJavaVMs"));
+      if (fptr_get_created != nullptr) {
+        hdl2 = fptr_get_created;
+      } else {
+        return false;
+      }
+      return true;
     }
     return false;
   }
@@ -132,8 +142,9 @@ bool resolve_create_jvm(JNI_CreateJavaVM_t& hdl) {
 }
 
 Jadx::Jadx(void) {
-  JNI_CreateJavaVM_t jvm_fnc = nullptr;
-  if (not resolve_create_jvm(jvm_fnc)) {
+  JNI_CreateJavaVM_t jvm_fnc              = nullptr;
+  JNI_GetCreatedJavaVMs_t jvm_get_created = nullptr;
+  if (not resolve(jvm_fnc, jvm_get_created)) {
     std::cerr << "[-] Can resolve JVM symbols" << std::endl;
     return;
   }
@@ -184,16 +195,25 @@ Jadx::Jadx(void) {
   args.nOptions = 1;
   args.ignoreUnrecognized = JNI_FALSE;
 
-  jsize jvm_count = 0;
-  jvm_fnc(&(this->jvm_), reinterpret_cast<void**>(&this->env_), &args);
+  int created = jvm_fnc(&(this->jvm_), reinterpret_cast<void**>(&this->env_), &args);
 
-  if (this->jvm_ == nullptr) {
-    std::cerr << "[-] Error while creating the JVM" << std::endl;
+  // It mays occurs if a JVM is already created
+  if (created != JNI_OK or this->jvm_ == nullptr) {
+    // 1. Get the number of JVM created
+    int nJVMs;
+    jvm_get_created(nullptr, 0, &nJVMs);
+    if (nJVMs == 0) {
+      std::cerr << "[-] Error while creating the JVM" << std::endl;
+      std::abort();
+    }
+    jvm_get_created(&this->jvm_, 1, &nJVMs);
+    this->jvm_->GetEnv(reinterpret_cast<void**>(&this->env_), JNI_VERSION_1_6);
   }
 }
 
 Jadx::~Jadx(void) {
   if (this->jvm_) {
+    //this->jvm_->DetachCurrentThread();
     //this->jvm_->DestroyJavaVM();
   }
 }

@@ -27,11 +27,13 @@ static constexpr bool jvm_static_link = false;
 #endif
 
 using JNI_CreateJavaVM_t = std::add_pointer_t<decltype(JNI_CreateJavaVM)>;
+using JNI_GetCreatedJavaVMs_t = std::add_pointer_t<decltype(JNI_GetCreatedJavaVMs)>;
 
 std::string get_jadx_prefix(void);
 std::vector<std::string> get_potential_libjvm_paths();
 int try_dlopen(std::vector<std::string> potential_paths, void*& out_handle);
 bool resolve_create_jvm(JNI_CreateJavaVM_t& hdl);
+bool resolve_get_created_jvm(JNI_GetCreatedJavaVMs_t& hdl);
 
 class Jadx {
   public:
