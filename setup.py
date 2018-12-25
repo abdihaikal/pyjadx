@@ -7,6 +7,8 @@ import glob
 import setuptools
 import pathlib
 
+from pkg_resources import Distribution, get_distribution
+
 from setuptools import setup, Extension
 from setuptools import Extension
 from setuptools.command.build_ext import build_ext, copy_file
@@ -19,6 +21,15 @@ MIN_SETUPTOOLS_VERSION = "31.0.0"
 assert (LooseVersion(setuptools.__version__) >= LooseVersion(MIN_SETUPTOOLS_VERSION)), "pyJadx requires a setuptools version '{}' or higher (pip install setuptools --upgrade)".format(MIN_SETUPTOOLS_VERSION)
 
 CURRENT_DIR = pathlib.Path(__file__).parent
+
+class PyJadxDistribution(setuptools.Distribution):
+    global_options = setuptools.Distribution.global_options + [
+        ('static-jvm', None, 'Link against JVM statically'),
+        ]
+
+    def __init__(self, attrs=None):
+        self.static_jvm = False
+        super().__init__(attrs)
 
 class Module(Extension):
     def __init__(self, name, sourcedir=''):
@@ -48,11 +59,15 @@ class CMakeBuild(build_ext):
         source_dir                     = ext.sourcedir
         build_temp                     = self.build_temp
         extdir                         = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
+        static_jvm                     = "ON" if self.distribution.static_jvm else "OFF"
+
         cmake_library_output_directory = os.path.abspath(os.path.dirname(build_temp))
         cmake_args = [
             '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={}'.format(cmake_library_output_directory),
             '-DPYTHON_EXECUTABLE={}'.format(sys.executable),
+            '-DJVM_STATIC_LINK={}'.format(static_jvm),
         ]
+
 
         cfg = 'Debug' if self.debug else 'Release'
         build_args = ['--config', cfg]
@@ -149,6 +164,7 @@ version = get_version()
 
 
 setup(
+    distclass=PyJadxDistribution,
     ext_modules=[Module('pyjadx')],
     cmdclass=dict(build_ext=CMakeBuild),
     version=version

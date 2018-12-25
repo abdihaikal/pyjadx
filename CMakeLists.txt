@@ -4,6 +4,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 set(THIRD_PARTY_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/third-party/")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+option(JVM_STATIC_LINK "Link against JVM staticaly" OFF)
+
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git" AND IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/.git")
   find_package(Git REQUIRED)
@@ -27,6 +29,7 @@ configure_file(
 # ==============
 project(PYJADX VERSION ${PYJADX_VERSION_MAJOR}.${PYJADX_VERSION_MINOR}.${PYJADX_VERSION_PATCH})
 message(STATUS "${PROJECT_NAME} ${PROJECT_VERSION}")
+message(STATUS "JVM Static Link: ${JVM_STATIC_LINK}")
 
 
 # CCACHE
@@ -65,8 +68,11 @@ target_include_directories(jadxjni INTERFACE
   ${JNI_INCLUDE_DIRS}
   ${THIRD_PARTY_DIRECTORY}/jni.hpp-4.0.0/include
 )
-target_link_libraries(jadxjni INTERFACE ${JNI_LIBRARIES})
-target_compile_features(jadxjni INTERFACE cxx_std_17)
+if (JVM_STATIC_LINK)
+  target_compile_definitions(jadxjni INTERFACE -DJVM_STATIC_LINK)
+  target_link_libraries(jadxjni INTERFACE ${JAVA_JVM_LIBRARY})
+endif()
 
+target_compile_features(jadxjni INTERFACE cxx_std_17)
 add_subdirectory(bindings)
 

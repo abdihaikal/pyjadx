@@ -20,7 +20,18 @@
 #include <vector>
 namespace jni {
 
+#if defined(JVM_STATIC_LINK)
+static constexpr bool jvm_static_link = true;
+#else
+static constexpr bool jvm_static_link = false;
+#endif
+
+using JNI_CreateJavaVM_t = std::add_pointer_t<decltype(JNI_CreateJavaVM)>;
+
 std::string get_jadx_prefix(void);
+std::vector<std::string> get_potential_libjvm_paths();
+int try_dlopen(std::vector<std::string> potential_paths, void*& out_handle);
+bool resolve_create_jvm(JNI_CreateJavaVM_t& hdl);
 
 class Jadx {
   public:
