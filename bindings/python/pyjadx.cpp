@@ -46,11 +46,27 @@ PYBIND11_MODULE(pyjadx, jadx_module) {
         &JadxDecompiler::packages,
         "List of :class:`~pyjadx.JavaPackage`")
 
+    .def("has_class",
+        &JadxDecompiler::has_class,
+        "Check if the class given in first argument is present",
+        "class_name"_a)
+
+    .def("has_package",
+        &JadxDecompiler::has_package,
+        "Check if the package given in first argument is present",
+        "package_name"_a)
+
     .def("get_class",
         &JadxDecompiler::get_class,
         "Return the :class:`~pyjadx.JavaClass` object from "
         "the name given in first parameter",
-        "class_name"_a);
+        "class_name"_a)
+
+    .def("get_package",
+        &JadxDecompiler::get_package,
+        "Return the :class:`~pyjadx.JavaPackage` object from "
+        "the name given in first parameter",
+        "pkg_name"_a);
 
   py::class_<JavaMethod>(jadx_module, "JavaMethod", "")
     .def_property_readonly("name",

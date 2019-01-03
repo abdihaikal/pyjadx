@@ -43,7 +43,11 @@ class JadxDecompiler {
   classes_list_t classes(void);
   packages_list_t packages(void);
 
+  bool has_class(const std::string& name);
+  bool has_package(const std::string& name);
+
   JavaClass get_class(const std::string& name);
+  JavaPackage get_package(const std::string& name);
 
   std::string getVersion(void) const;
 

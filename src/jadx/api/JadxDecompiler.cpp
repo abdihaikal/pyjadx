@@ -78,6 +78,31 @@ JadxDecompiler::packages_list_t JadxDecompiler::packages(void) {
 }
 
 
+bool JadxDecompiler::has_class(const std::string& name) {
+  classes_list_t classes = this->classes();
+
+  auto&& it = std::find_if(
+      std::begin(classes),
+      std::end(classes),
+      [&name] (JavaClass& cls) {
+        return cls.name() == name or cls.fullname() == name;
+      });
+  return it != std::end(classes);
+}
+
+bool JadxDecompiler::has_package(const std::string& name) {
+  packages_list_t pkg = this->packages();
+
+  auto&& it = std::find_if(
+      std::begin(pkg),
+      std::end(pkg),
+      [&name] (JavaPackage& p) {
+        return p.name() == name or p.fullname() == name;
+      });
+  return it != std::end(pkg);
+}
+
+
 std::string JadxDecompiler::getVersion(void) const {
   static auto&& getVersion = this->clazz().template GetMethod<String()>(this->env(), "getVersion");
 
@@ -96,6 +121,22 @@ JavaClass JadxDecompiler::get_class(const std::string& name) {
       });
 
   if (it == std::end(classes)) {
+    throw std::runtime_error("Not found!");
+  }
+  return std::move(*it);
+}
+
+JavaPackage JadxDecompiler::get_package(const std::string& name) {
+  packages_list_t pkg = this->packages();
+
+  auto&& it = std::find_if(
+      std::begin(pkg),
+      std::end(pkg),
+      [&name] (JavaPackage& p) {
+        return p.name() == name or p.fullname() == name;
+      });
+
+  if (it == std::end(pkg)) {
     throw std::runtime_error("Not found!");
   }
   return std::move(*it);
