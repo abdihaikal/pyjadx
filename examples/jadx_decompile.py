@@ -5,7 +5,6 @@ import pygments
 import pathlib
 
 jadx = pyjadx.Jadx()
-jadx = pyjadx.Jadx()
 
 def pretty_print(apk, classes):
     apk_path = pathlib.Path(apk).resolve().absolute()
