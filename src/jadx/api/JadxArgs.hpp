@@ -34,6 +34,8 @@ class JadxArgs {
   Local<Object_t> get(void);
 
   void setInputFiles(const std::vector<std::string>& inputs);
+  void show_inconsistent_code(bool value);
+  void escape_unicode(bool value);
 
   private:
   inline JNIEnv& env(void) {

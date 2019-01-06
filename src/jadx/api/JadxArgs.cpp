@@ -46,4 +46,17 @@ void JadxArgs::setInputFiles(const std::vector<std::string>& inputs) {
   return this->obj_.Call(this->env(), setInputFiles, file_list);
 }
 
+
+void JadxArgs::show_inconsistent_code(bool value) {
+  static auto&& setShowInconsistentCode = this->clazz().template GetMethod<void(jboolean)>(this->env(), "setShowInconsistentCode");
+
+  return this->obj_.Call(this->env(), setShowInconsistentCode, static_cast<jboolean>(value));
+}
+
+void JadxArgs::escape_unicode(bool value) {
+  static auto&& setEscapeUnicode = this->clazz().template GetMethod<void(jboolean)>(this->env(), "setEscapeUnicode");
+
+  return this->obj_.Call(this->env(), setEscapeUnicode, static_cast<jboolean>(value));
+}
+
 }

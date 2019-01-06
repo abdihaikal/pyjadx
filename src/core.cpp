@@ -20,6 +20,8 @@ namespace jni {
 jadx::api::JadxDecompiler Jadx::load(const std::string& apk_path) {
   jni::jadx::api::JadxArgs jadx_args{this->env()};
   jadx_args.setInputFiles({apk_path});
+  jadx_args.escape_unicode(true);
+  jadx_args.show_inconsistent_code(true);
   jni::jadx::api::JadxDecompiler decompiler{this->env(), jadx_args};
   decompiler.load();
   return decompiler;
