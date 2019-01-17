@@ -38,7 +38,13 @@ bool resolve_get_created_jvm(JNI_GetCreatedJavaVMs_t& hdl);
 class Jadx {
   public:
   Jadx(void);
-  jadx::api::JadxDecompiler load(const std::string& apk_path);
+  jadx::api::JadxDecompiler load(const std::string& apk_path,
+      bool escape_unicode = true,
+      bool show_inconsistent_code = true,
+      bool deobfuscation_on = false,
+      size_t deobfuscation_min_length = 3,
+      size_t deobfuscation_max_length = 64
+      );
 
   ~Jadx(void);
 

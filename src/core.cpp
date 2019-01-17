@@ -17,11 +17,24 @@
 #include <numeric>
 namespace jni {
 
-jadx::api::JadxDecompiler Jadx::load(const std::string& apk_path) {
+jadx::api::JadxDecompiler Jadx::load(const std::string& apk_path,
+      bool escape_unicode,
+      bool show_inconsistent_code,
+      bool deobfuscation_on,
+      size_t deobfuscation_min_length,
+      size_t deobfuscation_max_length)
+{
+
   jni::jadx::api::JadxArgs jadx_args{this->env()};
+
   jadx_args.setInputFiles({apk_path});
-  jadx_args.escape_unicode(true);
-  jadx_args.show_inconsistent_code(true);
+  jadx_args.escape_unicode(escape_unicode);
+  jadx_args.show_inconsistent_code(show_inconsistent_code);
+
+  jadx_args.deobfuscation_on(deobfuscation_on);
+  jadx_args.deobfuscation_min_length(deobfuscation_min_length);
+  jadx_args.deobfuscation_max_length(deobfuscation_max_length);
+
   jni::jadx::api::JadxDecompiler decompiler{this->env(), jadx_args};
   decompiler.load();
   return decompiler;

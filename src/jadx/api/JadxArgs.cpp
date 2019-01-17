@@ -53,6 +53,32 @@ void JadxArgs::show_inconsistent_code(bool value) {
   return this->obj_.Call(this->env(), setShowInconsistentCode, static_cast<jboolean>(value));
 }
 
+
+void JadxArgs::deobfuscation_on(bool value) {
+  static auto&& setDeobfuscationOn = this->clazz().template GetMethod<void(jboolean)>(this->env(), "setDeobfuscationOn");
+
+  return this->obj_.Call(this->env(), setDeobfuscationOn, static_cast<jboolean>(value));
+}
+
+void JadxArgs::use_source_name_as_class_alias(bool value) {
+  static auto&& setUseSourceNameAsClassAlias = this->clazz().template GetMethod<void(jboolean)>(this->env(), "setUseSourceNameAsClassAlias");
+
+  return this->obj_.Call(this->env(), setUseSourceNameAsClassAlias, static_cast<jboolean>(value));
+}
+
+
+void JadxArgs::deobfuscation_min_length(size_t value) {
+  static auto&& setDeobfuscationMinLength = this->clazz().template GetMethod<void(jint)>(this->env(), "setDeobfuscationMinLength");
+
+  return this->obj_.Call(this->env(), setDeobfuscationMinLength, static_cast<jint>(value));
+}
+
+void JadxArgs::deobfuscation_max_length(size_t value) {
+  static auto&& setDeobfuscationMaxLength = this->clazz().template GetMethod<void(jint)>(this->env(), "setDeobfuscationMaxLength");
+
+  return this->obj_.Call(this->env(), setDeobfuscationMaxLength, static_cast<jint>(value));
+}
+
 void JadxArgs::escape_unicode(bool value) {
   static auto&& setEscapeUnicode = this->clazz().template GetMethod<void(jboolean)>(this->env(), "setEscapeUnicode");
 

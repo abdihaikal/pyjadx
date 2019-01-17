@@ -30,7 +30,12 @@ PYBIND11_MODULE(pyjadx, jadx_module) {
 
   py::class_<jni::Jadx>(jadx_module, "Jadx", "")
     .def(py::init<>())
-    .def("load", &jni::Jadx::load);
+    .def("load",
+        &jni::Jadx::load,
+        "Load an APK or Dex file to decompile",
+        "apk_path"_a, "escape_unicode"_a = true, "show_inconsistent_code"_a = true,
+        "deobfuscation_on"_a = false, "deobfuscation_min_length"_a = 3, "deobfuscation_max_length"_a = 64
+        );
 
 
   py::class_<JadxDecompiler>(jadx_module, "JadxDecompiler", "")
