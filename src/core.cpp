@@ -164,32 +164,33 @@ Jadx::Jadx(void) {
     return;
   }
 
-
   static constexpr std::initializer_list<const char*> jadx_libraries = {
-    "image-viewer-1.2.3.jar",
-    "annotations-16.0.2.jar",
-    "jadx-cli-0.8.0.jar",
-    "logback-classic-1.2.3.jar",
-    "jcommander-1.74.jar",
-    "slf4j-api-1.7.25.jar",
-    "logback-core-1.2.3.jar",
-    "jadx-core-0.8.0.jar",
-    "jfontchooser-1.0.5.jar",
     "android-5.1.jar",
-    "gson-2.8.5.jar",
+    "annotations-16.0.3.jar",
+    "apksig-3.3.0.jar",
+    "asm-7.0.jar",
+    "cloning-1.9.11.jar",
     "commons-io-2.6.jar",
-    "jadx-gui-0.8.0.jar",
-    "rxjava2-swing-0.2.16.jar",
-    "reactive-streams-1.0.2.jar",
-    "dx-1.14.jar",
+    "commons-lang3-3.8.1.jar",
+    "commons-text-1.6.jar",
+    "dx-1.16.jar",
+    "gson-2.8.5.jar",
+    "image-viewer-1.2.3.jar",
+    "jadx-cli-0.9.0.jar",
+    "jadx-core-0.9.0.jar",
+    "jadx-gui-0.9.0.jar",
+    "jcommander-1.74.jar",
+    "jfontchooser-1.0.5.jar",
+    "logback-classic-1.2.3.jar",
+    "logback-core-1.2.3.jar",
     "objenesis-2.6.jar",
-    "cloning-1.9.10.jar",
-    "commons-lang3-3.7.jar",
-    "asm-6.2.jar",
-    "rxjava-2.1.17.jar",
-    "rsyntaxtextarea-2.6.1.jar",
+    "reactive-streams-1.0.2.jar",
+    "rsyntaxtextarea-3.0.0.jar",
+    "rxjava-2.2.5.jar",
+    "rxjava2-swing-0.3.3.jar",
+    "slf4j-api-1.7.25.jar",
   };
-  static const std::string prefix = get_jadx_prefix() + "/jadx/0.8.0/";
+  static const std::string prefix = get_jadx_prefix() + "/jadx/0.9.0/";
 
   std::string classpath = std::accumulate(
       std::begin(jadx_libraries),
