@@ -14,6 +14,7 @@
  */
 #include "pyjadx.hpp"
 #include "version.h"
+#include "utils.hpp"
 #include <jadx/jadx.hpp>
 #include "core.hpp"
 #include <sstream>
@@ -27,6 +28,14 @@ PYBIND11_MODULE(pyjadx, jadx_module) {
   jadx_module.attr("__version__")          = py::str(PYJADX_VERSION);
   jadx_module.attr("__pyjadx_tag__")       = py::str(PYJADX_TAG);
   jadx_module.attr("__pyjadx_is_tagged__") = py::bool_(PYJADX_TAGGED);
+
+  jadx_module.def("normalize_class_name", &normalize_class_name,
+      "",
+      "name"_a);
+
+  jadx_module.def("pretty_class_name", &pretty_class_name,
+      "",
+      "name"_a, "with_ext"_a = false);
 
   py::class_<jni::Jadx>(jadx_module, "Jadx", "")
     .def(py::init<>())
