@@ -12,8 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <jadx/api/JadxDecompiler.hpp>
-#include <java/util/List.hpp>
+#include "jadx/api/JadxDecompiler.hpp"
+#include "java/util/List.hpp"
+#include "utils.hpp"
 
 #include <algorithm>
 
@@ -80,6 +81,7 @@ JadxDecompiler::packages_list_t JadxDecompiler::packages(void) {
 
 bool JadxDecompiler::has_class(const std::string& name) {
   classes_list_t classes = this->classes();
+  const std::string pretty_name = pretty_class_name(name);
 
   auto&& it = std::find_if(
       std::begin(classes),
@@ -92,6 +94,7 @@ bool JadxDecompiler::has_class(const std::string& name) {
 
 bool JadxDecompiler::has_package(const std::string& name) {
   packages_list_t pkg = this->packages();
+  const std::string pretty_name = pretty_class_name(name);
 
   auto&& it = std::find_if(
       std::begin(pkg),
@@ -112,32 +115,35 @@ std::string JadxDecompiler::getVersion(void) const {
 
 JavaClass JadxDecompiler::get_class(const std::string& name) {
   classes_list_t classes = this->classes();
+  const std::string pretty_name = pretty_class_name(name);
+
 
   auto&& it = std::find_if(
       std::begin(classes),
       std::end(classes),
-      [&name] (JavaClass& cls) {
-        return cls.name() == name or cls.fullname() == name;
+      [&pretty_name] (JavaClass& cls) {
+        return cls.name() == pretty_name or cls.fullname() == pretty_name;
       });
 
   if (it == std::end(classes)) {
-    throw std::runtime_error("Not found!");
+    throw std::runtime_error("Class '" + pretty_name + "' not found!");
   }
   return std::move(*it);
 }
 
 JavaPackage JadxDecompiler::get_package(const std::string& name) {
   packages_list_t pkg = this->packages();
+  const std::string pretty_name = pretty_class_name(name);
 
   auto&& it = std::find_if(
       std::begin(pkg),
       std::end(pkg),
-      [&name] (JavaPackage& p) {
-        return p.name() == name or p.fullname() == name;
+      [&pretty_name] (JavaPackage& p) {
+        return p.name() == pretty_name or p.fullname() == pretty_name;
       });
 
   if (it == std::end(pkg)) {
-    throw std::runtime_error("Not found!");
+    throw std::runtime_error("Package '" + pretty_name + "' not found!");
   }
   return std::move(*it);
 }
